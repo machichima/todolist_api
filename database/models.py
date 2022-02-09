@@ -8,4 +8,4 @@ class Project(db.Document):
 class Task(db.Document):
     task_name = db.StringField(required=True, unique=True)
     is_done = db.BooleanField(default=False)
-    project = db.ReferenceField('Project', reverse_delete_rule=db.PULL)
+    project = db.ReferenceField('Project', required=True, reverse_delete_rule=db.PULL)
