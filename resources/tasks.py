@@ -5,7 +5,7 @@ from database.models import Task
 
 class TasksForProjectApi(Resource):
     def get(self, project_id):
-        tasks = Task.objects.get(project=project_id).to_json()
+        tasks = Task.objects.filter(project=project_id).to_json()
         return Response(tasks, mimetype="application/json", status=200)
 
 class TasksApi(Resource):
