@@ -1,7 +1,7 @@
 from asyncio import tasks
 from flask import Response, request
 from flask_restful import Resource
-from database.models import Task
+from database.models import Task, Project
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 class TasksForProjectApi(Resource):
@@ -10,14 +10,23 @@ class TasksForProjectApi(Resource):
         tasks = Task.objects.filter(project=project_id).to_json()
         return Response(tasks, mimetype="application/json", status=200)
 
-class TasksApi(Resource):
-    @jwt_required()
-    def post(self):
+    def post(self, project_id):
+        project = Project.objects.get(id=project_id)
         body = request.get_json()
-        task = Task(**body)
+        task = Task(**body, project=project)
         task.save()
+        project.update(push__tasks=task)
         id = task.id
         return {'id': str(id)}, 200
+
+# class TasksApi(Resource):
+#     @jwt_required()
+#     def post(self):
+#         body = request.get_json()
+#         task = Task(**body)
+#         task.save()
+#         id = task.id
+#         return {'id': str(id)}, 200
 
 class TaskApi(Resource):
     @jwt_required()
