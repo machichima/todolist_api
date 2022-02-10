@@ -6,7 +6,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 class ProjectsApi(Resource):
     @jwt_required()
     def get(self):
-        projects = Project.objects().to_json()
+        user_id = get_jwt_identity()
+        projects = Project.objects().filter(added_by=user_id).to_json()
         return Response(projects, mimetype="application/json", status=200)
     
     @jwt_required()
